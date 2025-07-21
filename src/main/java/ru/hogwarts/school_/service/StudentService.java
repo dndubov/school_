@@ -27,20 +27,25 @@ public class StudentService {
     }
 
     public Student updateStudent(Student student) {
-        return studentRepository.save(student);
+        if (studentRepository.existsById(student.getId())) {
+            return studentRepository.save(student);
+        }
+        return null;
     }
 
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
     }
 
-    public Collection<Student> getAllStudent(){
+    public Collection<Student> getAllStudent() {
         return studentRepository.findAll();
     }
 
     public List<Student> getStudentsByAge(int age) {
-        return studentRepository.findAll().stream()
-                .filter(student -> student.getAge() == age)
-                .toList();
+        return studentRepository.findByAge(age);
+    }
+
+    public List<Student> getStudentsByAgeBetween(int min, int max) {
+        return studentRepository.findByAgeBetween(min, max);
     }
 }

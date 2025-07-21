@@ -1,6 +1,7 @@
 package ru.hogwarts.school_.model;
 
-import jakarta.persistence.*; // <-- импорт из jakarta или javax
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,11 @@ public class Student {
     private Long id;
 
     private String name;
-
     private int age;
+
+    @ManyToOne
+    @JoinColumn(name = "faculty_id")
+    @JsonBackReference
+    private Faculty faculty;
+
 }

@@ -3,6 +3,7 @@ package ru.hogwarts.school_.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school_.model.Faculty;
+import ru.hogwarts.school_.model.Student;
 import ru.hogwarts.school_.service.FacultyService;
 
 import java.util.List;
@@ -38,4 +39,16 @@ public class FacultyController {
     public List<Faculty> getFacultiesByColor(@RequestParam String color){
         return facultyService.getFacultiesByColor(color);
     }
+
+    @GetMapping("/search")
+    public List<Faculty> findByNameOrColor(@RequestParam String query) {
+        return facultyService.findByNameOrColor(query);
+    }
+
+    @GetMapping("/{id}/students")
+    public List<Student> getStudentsByFacultyId(@PathVariable Long id) {
+        Faculty faculty = facultyService.getFaculty(id);
+        return faculty != null ? faculty.getStudents() : List.of();
+    }
+
 }
