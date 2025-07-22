@@ -6,14 +6,19 @@ import ru.hogwarts.school_.model.Faculty;
 import ru.hogwarts.school_.model.Student;
 import ru.hogwarts.school_.service.FacultyService;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/faculty")
-@RequiredArgsConstructor
 public class FacultyController {
 
     private final FacultyService facultyService;
+
+    public FacultyController(FacultyService facultyService) {
+        this.facultyService = facultyService;
+    }
 
     @PostMapping
     public Faculty createFaculty(@RequestBody Faculty faculty) {
@@ -48,7 +53,7 @@ public class FacultyController {
     @GetMapping("/{id}/students")
     public List<Student> getStudentsByFacultyId(@PathVariable Long id) {
         Faculty faculty = facultyService.getFaculty(id);
-        return faculty != null ? faculty.getStudents() : List.of();
+        return faculty != null ? faculty.getStudents() : Collections.emptyList();
     }
 
 }

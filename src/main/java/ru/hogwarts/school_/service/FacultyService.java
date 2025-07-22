@@ -1,18 +1,20 @@
 package ru.hogwarts.school_.service;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.hogwarts.school_.model.Faculty;
 import ru.hogwarts.school_.repository.FacultyRepository;
 
 import java.util.List;
 
+@Transactional
 @Service
 public class FacultyService {
 
     private final FacultyRepository facultyRepository;
 
-    @Autowired
     public FacultyService(FacultyRepository facultyRepository) {
         this.facultyRepository = facultyRepository;
     }
@@ -47,5 +49,9 @@ public class FacultyService {
 
     public List<Faculty> findByNameOrColor(String query) {
         return facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(query, query);
+    }
+
+    public Faculty findByName(String name) {
+        return facultyRepository.findByName(name).orElse(null);
     }
 }

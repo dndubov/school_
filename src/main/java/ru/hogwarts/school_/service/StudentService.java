@@ -1,24 +1,31 @@
 package ru.hogwarts.school_.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.hogwarts.school_.model.Faculty;
 import ru.hogwarts.school_.model.Student;
 import ru.hogwarts.school_.repository.StudentRepository;
 
 import java.util.Collection;
 import java.util.List;
 
+@Transactional
 @Service
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final FacultyService facultyService;
 
-    @Autowired
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, FacultyService facultyService) {
         this.studentRepository = studentRepository;
+        this.facultyService = facultyService;
     }
 
     public Student createStudent(Student student) {
+        Faculty faculty = facultyService.findByName(student.getFaculty().getName());
+        student.setFaculty(faculty);
         return studentRepository.save(student);
     }
 
