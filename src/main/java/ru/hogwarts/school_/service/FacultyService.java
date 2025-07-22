@@ -1,18 +1,18 @@
 package ru.hogwarts.school_.service;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hogwarts.school_.model.Faculty;
+import ru.hogwarts.school_.model.Student;
 import ru.hogwarts.school_.repository.FacultyRepository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-@Transactional
 @Service
+@Transactional
 public class FacultyService {
-
     private final FacultyRepository facultyRepository;
 
     public FacultyService(FacultyRepository facultyRepository) {
@@ -23,35 +23,42 @@ public class FacultyService {
         return facultyRepository.save(faculty);
     }
 
+    @Transactional(readOnly = true)
     public Faculty getFaculty(Long id) {
         return facultyRepository.findById(id).orElse(null);
     }
 
     public Faculty updateFaculty(Long id, Faculty faculty) {
-        if (facultyRepository.existsById(id)) {
-            faculty.setId(id);
-            return facultyRepository.save(faculty);
-        }
-        return null;
+        faculty.setId(id);
+        return facultyRepository.save(faculty);
     }
 
-    public Faculty deleteFaculty(Long id) {
-        Faculty faculty = facultyRepository.findById(id).orElse(null);
-        if (faculty != null) {
-            facultyRepository.deleteById(id);
-        }
-        return faculty;
+    public void deleteFaculty(Long id) {
+        facultyRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<Faculty> getFacultiesByColor(String color) {
         return facultyRepository.findByColorIgnoreCase(color);
     }
 
+    @Transactional(readOnly = true)
     public List<Faculty> findByNameOrColor(String query) {
         return facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(query, query);
     }
 
-    public Faculty findByName(String name) {
-        return facultyRepository.findByName(name).orElse(null);
+    @Transactional(readOnly = true)
+    public List<Student> getStudentsByFacultyId(Long facultyId) {
+        if (facultyId == null) {
+            return Collections.emptyList();
+        }
+        return facultyRepository.findById(facultyId)
+                .map(Faculty::getStudents)
+                .orElse(Collections.emptyList());
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Faculty> findByName(String name) {
+        return facultyRepository.findByName(name);
     }
 }

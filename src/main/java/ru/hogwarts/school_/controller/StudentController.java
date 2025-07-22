@@ -1,7 +1,6 @@
 package ru.hogwarts.school_.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school_.model.Faculty;
 import ru.hogwarts.school_.model.Student;
@@ -12,13 +11,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/student")
+@RequiredArgsConstructor
 public class StudentController {
-
     private final StudentService studentService;
-
-    public StudentController(StudentService studentService) {
-        this.studentService = studentService;
-    }
 
     @PostMapping
     public Student createStudent(@RequestBody Student student) {
@@ -31,20 +26,19 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
-        student.setId(id);
-        return studentService.updateStudent(student);
+    public Student updateStudent(@PathVariable Long id,
+                                 @RequestBody Student student) {
+        return studentService.updateStudent(id, student);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+    public void deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping
     public Collection<Student> getAllStudents() {
-        return studentService.getAllStudent();
+        return studentService.getAllStudents();
     }
 
     @GetMapping("/filter")
@@ -53,15 +47,14 @@ public class StudentController {
     }
 
     @GetMapping("/age-between")
-    public List<Student> getStudentsByAgeBetween(@RequestParam int min,
-                                                 @RequestParam int max) {
+    public List<Student> getStudentsByAgeBetween(
+            @RequestParam int min,
+            @RequestParam int max) {
         return studentService.getStudentsByAgeBetween(min, max);
     }
 
     @GetMapping("/{id}/faculty")
     public Faculty getFacultyByStudentId(@PathVariable Long id) {
-        Student student = studentService.getStudent(id);
-        return student != null ? student.getFaculty() : null;
+        return studentService.getFacultyByStudentId(id);
     }
-
 }
