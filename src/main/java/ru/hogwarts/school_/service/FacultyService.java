@@ -28,6 +28,12 @@ public class FacultyService {
         return facultyRepository.findById(id).orElse(null);
     }
 
+    // Добавленный метод для совместимости с тестами и контроллером
+    @Transactional(readOnly = true)
+    public Faculty getFacultyById(Long id) {
+        return getFaculty(id);
+    }
+
     public Faculty updateFaculty(Long id, Faculty faculty) {
         faculty.setId(id);
         return facultyRepository.save(faculty);
