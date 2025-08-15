@@ -79,6 +79,13 @@ public class AvatarService {
     }
 
     public Page<Avatar> getAvatars(int page, int size) {
+        if (page < 0) {
+            throw new IllegalArgumentException("Page index must be >= 0");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Page size must be > 0");
+        }
         return avatarRepository.findAll(PageRequest.of(page, size));
     }
+
 }
