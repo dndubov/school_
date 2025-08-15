@@ -64,4 +64,19 @@ public class StudentService {
                 .map(Student::getFaculty)
                 .orElse(null);
     }
+
+    @Transactional(readOnly = true)
+    public long getStudentsCount() {
+        return studentRepository.getStudentsCount();
+    }
+
+    @Transactional(readOnly = true)
+    public double getAverageAge() {
+        return studentRepository.getAverageAge();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Student> getLastFiveStudents() {
+        return studentRepository.getLastFiveStudents();
+    }
 }

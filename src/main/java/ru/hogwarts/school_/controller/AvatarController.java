@@ -1,5 +1,6 @@
 package ru.hogwarts.school_.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,4 +40,12 @@ public class AvatarController {
     public ResponseEntity<byte[]> getAvatarFromFile(@PathVariable Long studentId) {
         return avatarService.getAvatarFromFile(studentId);
     }
+
+    @GetMapping("/list")
+    public Page<Avatar> getAvatars(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return avatarService.getAvatars(page, size);
+    }
+
 }
