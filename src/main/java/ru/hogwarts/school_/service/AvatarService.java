@@ -1,6 +1,8 @@
 package ru.hogwarts.school_.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -75,4 +77,15 @@ public class AvatarService {
     private String getExtension(String filename) {
         return filename.substring(filename.lastIndexOf('.') + 1);
     }
+
+    public Page<Avatar> getAvatars(int page, int size) {
+        if (page < 0) {
+            throw new IllegalArgumentException("Page index must be >= 0");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Page size must be > 0");
+        }
+        return avatarRepository.findAll(PageRequest.of(page, size));
+    }
+
 }
