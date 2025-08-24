@@ -17,7 +17,6 @@ import ru.hogwarts.school_.service.StudentService;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -45,7 +44,7 @@ class StudentControllerWebMvcTest {
 
     @Test
     void createStudent() throws Exception {
-        Student student = new Student(1L, "Ivan", 20);
+        Student student = new Student(1L, "Ivan", 20, null);
         when(studentService.createStudent(any(Student.class))).thenReturn(student);
 
         mockMvc.perform(post("/student")
@@ -57,8 +56,8 @@ class StudentControllerWebMvcTest {
 
     @Test
     void getStudent() throws Exception {
-        Student student = new Student(1L, "Ivan", 20);
-        when(studentService.getStudent(1L)).thenReturn(student);
+        Student student = new Student(1L, "Ivan", 20, null);
+        when(studentService.getStudent(any(Long.class))).thenReturn(student);
 
         mockMvc.perform(get("/student/1"))
                 .andExpect(status().isOk())
@@ -67,19 +66,20 @@ class StudentControllerWebMvcTest {
 
     @Test
     void updateStudent() throws Exception {
-        Student student = new Student(1L, "Updated", 22);
+        Student student = new Student(1L, "Updated", 22, null);
         when(studentService.updateStudent(eq(1L), any(Student.class))).thenReturn(student);
 
         mockMvc.perform(put("/student/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(student)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Updated"));
+                .andExpect(jsonPath("$.name").value("Updated"))
+                .andExpect(jsonPath("$.age").value(22));
     }
 
     @Test
     void deleteStudent() throws Exception {
-        doNothing().when(studentService).deleteStudent(1L);
+        doNothing().when(studentService).deleteStudent(any(Long.class));
 
         mockMvc.perform(delete("/student/1"))
                 .andExpect(status().isOk());
@@ -87,7 +87,7 @@ class StudentControllerWebMvcTest {
 
     @Test
     void getStudentsByAge() throws Exception {
-        Student student = new Student(1L, "Ivan", 20);
+        Student student = new Student(1L, "Ivan", 20, null);
         when(studentService.getStudentsByAge(20)).thenReturn(List.of(student));
 
         mockMvc.perform(get("/student/filter?age=20"))
