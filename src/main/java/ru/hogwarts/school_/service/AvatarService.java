@@ -1,5 +1,6 @@
 package ru.hogwarts.school_.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,7 @@ public class AvatarService {
             String extension = getExtension(file.getOriginalFilename());
             String fileName = "avatar_" + studentId + "." + extension;
             Path path = Paths.get(avatarsDir, fileName);
+            Files.createDirectories(path.getParent());
             Files.write(path, data);
 
             Avatar avatar = avatarRepository.findByStudentId(studentId)
@@ -56,11 +58,13 @@ public class AvatarService {
         }
     }
 
+
     public Avatar getAvatarByStudentId(Long studentId) {
         return avatarRepository.findByStudentId(studentId)
                 .orElseThrow(() -> new RuntimeException("Аватар не найден"));
     }
 
+    @Transactional
     public ResponseEntity<byte[]> getAvatarFromFile(Long studentId) {
         Avatar avatar = getAvatarByStudentId(studentId);
         try {
@@ -73,6 +77,15 @@ public class AvatarService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @Transactional
+    public ResponseEntity<byte[]> getAvatarFromDb(Long studentId) {
+        Avatar avatar = getAvatarByStudentId(studentId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(avatar.getMediaType()))
+                .body(avatar.getData());
+    }
+
 
     private String getExtension(String filename) {
         return filename.substring(filename.lastIndexOf('.') + 1);

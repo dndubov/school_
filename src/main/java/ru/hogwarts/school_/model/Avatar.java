@@ -19,8 +19,6 @@ public class Avatar {
     @Lob
     private byte[] data;
 
-    // геттеры и сеттеры
-
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

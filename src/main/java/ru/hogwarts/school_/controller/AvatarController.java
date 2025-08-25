@@ -1,5 +1,6 @@
 package ru.hogwarts.school_.controller;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +30,9 @@ public class AvatarController {
     // 2. Получение файла из БД
     @GetMapping("/{studentId}/preview-from-db")
     public ResponseEntity<byte[]> getAvatarFromDb(@PathVariable Long studentId) {
-        Avatar avatar = avatarService.getAvatarByStudentId(studentId);
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(avatar.getMediaType()))
-                .body(avatar.getData());
+        return avatarService.getAvatarFromDb(studentId);
     }
+
 
     // 3. Получение файла с диска
     @GetMapping("/{studentId}/preview-from-file")
