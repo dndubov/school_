@@ -25,7 +25,7 @@ public class StudentControllerTest {
 
     @Test
     void testCreateStudent() {
-        Student student = new Student(null, "Harry", 11);
+        Student student = new Student(null, "Harry", 11, null);
         ResponseEntity<Student> response = restTemplate.postForEntity(
                 baseUrl(), student, Student.class
         );
@@ -38,7 +38,7 @@ public class StudentControllerTest {
 
     @Test
     void testGetStudentById() {
-        Student student = new Student(null, "Ron", 12);
+        Student student = new Student(null, "Ron", 12, null);
         Student created = restTemplate.postForEntity(baseUrl(), student, Student.class).getBody();
 
         ResponseEntity<Student> response = restTemplate.getForEntity(
@@ -52,7 +52,7 @@ public class StudentControllerTest {
 
     @Test
     void testUpdateStudent() {
-        Student student = new Student(null, "Hermione", 13);
+        Student student = new Student(null, "Hermione", 13, null);
         Student created = restTemplate.postForEntity(baseUrl(), student, Student.class).getBody();
 
         created.setName("Hermione Granger");
@@ -73,7 +73,7 @@ public class StudentControllerTest {
 
     @Test
     void testDeleteStudent() {
-        Student student = new Student(null, "Draco", 14);
+        Student student = new Student(null, "Draco", 14, null);
         Student created = restTemplate.postForEntity(baseUrl(), student, Student.class).getBody();
 
         restTemplate.delete(baseUrl() + "/" + created.getId());
@@ -87,7 +87,7 @@ public class StudentControllerTest {
 
     @Test
     void testGetStudentsByAge() {
-        Student student = new Student(null, "Neville", 15);
+        Student student = new Student(null, "Neville", 15, null);
         restTemplate.postForEntity(baseUrl(), student, Student.class);
 
         ResponseEntity<Student[]> response = restTemplate.getForEntity(

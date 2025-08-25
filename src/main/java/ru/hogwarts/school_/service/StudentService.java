@@ -93,14 +93,35 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public double getAverageAge() {
-        logger.info("Was invoked method getAverageAge");
-        return studentRepository.getAverageAge();
-    }
-
-    @Transactional(readOnly = true)
     public List<Student> getLastFiveStudents() {
         logger.info("Was invoked method getLastFiveStudents");
         return studentRepository.getLastFiveStudents();
     }
+
+    @Transactional(readOnly = true)
+    public List<String> getStudentNamesStartingWithA() {
+        logger.info("Filtering student names starting with 'A'...");
+        List<String> names = studentRepository.findAll()
+                .parallelStream()
+                .map(Student::getName)
+                .filter(name -> name.toUpperCase().startsWith("A"))
+                .map(String::toUpperCase)
+                .sorted()
+                .toList();
+        logger.info("Found {} names starting with 'A'", names.size());
+        return names;
+    }
+
+    @Transactional(readOnly = true)
+    public double getAverageAgeOfAllStudents() {
+        logger.info("Calculating average age of all students...");
+        double avg = studentRepository.findAll()
+                .stream()
+                .mapToInt(Student::getAge)
+                .average()
+                .orElse(0);
+        logger.info("Average age calculated: {}", avg);
+        return avg;
+    }
+
 }

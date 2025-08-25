@@ -60,6 +60,7 @@ public class AvatarService {
             avatar.setFileSize(data.length);
             avatar.setMediaType(file.getContentType());
 
+            avatar.setUrl("/avatar/" + studentId);
             avatarRepository.save(avatar);
             log.info("Avatar uploaded successfully for studentId={}", studentId);
         } catch (IOException e) {
