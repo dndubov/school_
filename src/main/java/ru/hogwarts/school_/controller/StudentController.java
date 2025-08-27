@@ -8,6 +8,7 @@ import ru.hogwarts.school_.service.StudentService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/student")
@@ -25,7 +26,7 @@ public class StudentController {
         return studentService.getStudent(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/update")
     public Student updateStudent(@PathVariable Long id,
                                  @RequestBody Student student) {
         return studentService.updateStudent(id, student);
@@ -36,7 +37,7 @@ public class StudentController {
         studentService.deleteStudent(id);
     }
 
-    @GetMapping
+    @GetMapping("/all-student")
     public Collection<Student> getAllStudents() {
         return studentService.getAllStudents();
     }
@@ -77,6 +78,62 @@ public class StudentController {
     @GetMapping("/students/average-age")
     public double getAverageAge() {
         return studentService.getAverageAgeOfAllStudents();
+    }
+
+    @GetMapping("/students/print-parallel")
+    public void printStudentsParallel() {
+        List<Student> students = studentService.getAllStudents().stream().toList();
+
+        if (students.size() < 6) {
+            System.out.println("Недостаточно студентов (нужно минимум 6)");
+            return;
+        }
+
+        // первые два имени — основной поток
+        System.out.println(Thread.currentThread().getName() + " → " + students.get(0).getName());
+        System.out.println(Thread.currentThread().getName() + " → " + students.get(1).getName());
+
+        // третье и четвертое имя — первый параллельный поток
+        new Thread(() -> {
+            System.out.println(Thread.currentThread().getName() + " → " + students.get(2).getName());
+            System.out.println(Thread.currentThread().getName() + " → " + students.get(3).getName());
+        }).start();
+
+        // пятое и шестое имя — второй параллельный поток
+        new Thread(() -> {
+            System.out.println(Thread.currentThread().getName() + " → " + students.get(4).getName());
+            System.out.println(Thread.currentThread().getName() + " → " + students.get(5).getName());
+        }).start();
+    }
+
+    @GetMapping("/students/print-synchronized")
+    public void printStudentsSynchronized() {
+        List<Student> students = studentService.getAllStudents().stream().toList();
+
+        if (students.size() < 6) {
+            System.out.println("Недостаточно студентов (нужно минимум 6)");
+            return;
+        }
+
+        // синхронизированный метод для вывода имени
+        Consumer<String> printName = name -> {
+            synchronized (System.out) {
+                System.out.println(Thread.currentThread().getName() + " → " + name);
+            }
+        };
+
+        // первые два имени — основной поток
+        students.stream().limit(2).forEach(s -> printName.accept(s.getName()));
+
+        // третье и четвертое имя — первый параллельный поток
+        new Thread(() -> students.stream().skip(2).limit(2)
+                .forEach(s -> printName.accept(s.getName()))
+        ).start();
+
+        // пятое и шестое имя — второй параллельный поток
+        new Thread(() -> students.stream().skip(4).limit(2)
+                .forEach(s -> printName.accept(s.getName()))
+        ).start();
     }
 
 }
