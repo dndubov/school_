@@ -123,5 +123,4 @@ public class StudentService {
         logger.info("Average age calculated: {}", avg);
         return avg;
     }
-
 }
